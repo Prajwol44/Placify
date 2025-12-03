@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block title %}Notification Settings - PlacementPro{% endblock %}
+
+{% block content %}
+<style>
+    .settings-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+    
+    .settings-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--light-gray);
+    }
+    
+    .card-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .permission-status {
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .permission-status.granted {
+        background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+        border: 2px solid #10B981;
+    }
+    
+    .permission-status.denied {
+        background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+        border: 2px solid #EF4444;
+    }
+    
+    .permission-status.default {
+        background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+        border: 2px solid #F59E0B;
+    }
+    
+    .notification-type {
+        padding: 1.5rem;
+        background: #F9FAFB;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .notification-type-icon {
+        font-size: 2.5rem;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .notification-type-content {
+        flex: 1;
+    }
+    
+    .notification-type h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    .notification-type p {
+        margin: 0;
+        color: var(--gray);
+        font-size: 0.95rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        box-shadow: 0 6px 20px rgba(15, 76, 129, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(15, 76, 129, 0.4);
+    }
+    
+    .btn-test {
+        background: linear-gradient(135deg, #F59E0B, #D97706);
+        color: white;
+    }
+    
+    .btn-test:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+    }
+    
+    .info-box {
+        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+        border-left: 4px solid #3B82F6;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-top: 2rem;
+    }
+    
+    .info-box ul {
+        margin: 0.5rem 0 0 1.5rem;
+        line-height: 1.8;
+    }
+</style>
+
+<div class="settings-container">
+    <div class="page-header">
+        <h1>🔔 Browser Notification Settings</h1>
+        <p style="color: var(--gray); font-size: 1.1rem;">
+            Configure instant desktop alerts for new jobs and deadlines
+        </p>
+    </div>
+    
+    <!-- Permission Status Card -->
+    <div class="settings-card">
+        <div class="card-header">
+            <span style="font-size: 2rem;">⚙️</span>
+            <h2>Notification Status</h2>
+        </div>
+        
+        <div id="permissionStatus" class="permission-status default">
+            <span style="font-size: 2.5rem;">⏳</span>
+            <div style="flex: 1;">
+                <h3 style="margin: 0 0 0.5rem 0; font-weight: 700; font-size: 1.1rem;">
+                    Checking Status...
+                </h3>
+                <p style="margin: 0; font-size: 0.95rem;">Please wait</p>
+            </div>
+        </div>
+        
+        <div id="permissionActions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <!-- Buttons will be added by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Notification Types -->
+    <div class="settings-card">
+        <div class="card-header">
+            <span style="font-size: 2rem;">📬</span>
+            <h2>Notification Types</h2>
+        </div>
+        
+        <div class="notification-type">
+            <div class="notification-type-icon">🔥</div>
+            <div class="notification-type-content">
+                <h3>Critical Deadlines</h3>
+                <p>Jobs with deadlines within 24 hours - Immediate action required</p>
+            </div>
+            <button class="btn btn-test" onclick="testNotification('critical')">
+                Test
+            </button>
+        </div>
+        
+        <div class="notification-type">
+            <div class="notification-type-icon">⚡</div>
+            <div class="notification-type-content">
+                <h3>Urgent Jobs</h3>
+                <p>Applications closing within 2-3 days - Act soon</p>
+            </div>
+            <button class="btn btn-test" onclick="testNotification('urgent')">
+                Test
+            </button>
+        </div>
+        
+        <div class="notification-type">
+            <div class="notification-type-icon">💼</div>
+            <div class="notification-type-content">
+                <h3>New Job Postings</h3>
+                <p>Fresh opportunities matching your profile</p>
+            </div>
+            <button class="btn btn-test" onclick="testNotification('new_job')">
+                Test
+            </button>
+        </div>
+        
+        <div class="notification-type">
+            <div class="notification-type-icon">⏰</div>
+            <div class="notification-type-content">
+                <h3>Reminder Alerts</h3>
+                <p>Pending applications and upcoming deadlines</p>
+            </div>
+            <button class="btn btn-test" onclick="testNotification('deadline')">
+                Test
+            </button>
+        </div>
+        
+        <div class="notification-type">
+            <div class="notification-type-icon">✅</div>
+            <div class="notification-type-content">
+                <h3>Application Updates</h3>
+                <p>Status changes on your submitted applications</p>
+            </div>
+            <button class="btn btn-test" onclick="testNotification('success')">
+                Test
+            </button>
+        </div>
+    </div>
+    
+    <!-- How It Works -->
+    <div class="settings-card">
+        <div class="card-header">
+            <span style="font-size: 2rem;">💡</span>
+            <h2>How Browser Notifications Work</h2>
+        </div>
+        
+        <div class="info-box">
+            <h3 style="margin: 0 0 1rem 0; font-weight: 700; color: #1E40AF;">
+                📌 Key Features:
+            </h3>
+            <ul style="color: #1E3A8A;">
+                <li><strong>Real-Time Alerts:</strong> Get notified instantly when new jobs are posted</li>
+                <li><strong>Works Offline:</strong> Notifications arrive even when browser is closed (if supported)</li>
+                <li><strong>Click to View:</strong> Clicking notification takes you directly to the job</li>
+                <li><strong>Sound & Vibration:</strong> Optional audio and haptic feedback</li>
+                <li><strong>Auto-Check:</strong> System checks for new notifications every 30 seconds</li>
+                <li><strong>Privacy First:</strong> No data shared with third parties</li>
+            </ul>
+        </div>
+        
+        <div class="info-box" style="background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-left-color: #F59E0B; margin-top: 1rem;">
+            <h3 style="margin: 0 0 1rem 0; font-weight: 700; color: #92400E;">
+                ⚠️ Important Notes:
+            </h3>
+            <ul style="color: #78350F;">
+                <li>Browser must be open to receive real-time notifications</li>
+                <li>Check browser settings if notifications aren't working</li>
+                <li>Some browsers block notifications in incognito/private mode</li>
+                <li>Mobile browsers may have limited support</li>
+                <li>You can disable notifications anytime from browser settings</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Browser Compatibility -->
+    <div class="settings-card">
+        <div class="card-header">
+            <span style="font-size: 2rem;">🌐</span>
+            <h2>Browser Compatibility</h2>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div style="padding: 1rem; background: #F9FAFB; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✅</div>
+                <strong>Chrome</strong>
+                <div style="color: var(--gray); font-size: 0.9rem;">Full Support</div>
+            </div>
+            <div style="padding: 1rem; background: #F9FAFB; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✅</div>
+                <strong>Firefox</strong>
+                <div style="color: var(--gray); font-size: 0.9rem;">Full Support</div>
+            </div>
+            <div style="padding: 1rem; background: #F9FAFB; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✅</div>
+                <strong>Edge</strong>
+                <div style="color: var(--gray); font-size: 0.9rem;">Full Support</div>
+            </div>
+            <div style="padding: 1rem; background: #F9FAFB; border-radius: 10px; text-align: center;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚠️</div>
+                <strong>Safari</strong>
+                <div style="color: var(--gray); font-size: 0.9rem;">Limited</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function checkPermissionStatus() {
+    if (!('Notification' in window)) {
+        showStatus('unsupported');
+        return;
+    }
+    
+    const permission = Notification.permission;
+    showStatus(permission);
+}
+
+function showStatus(status) {
+    const statusDiv = document.getElementById('permissionStatus');
+    const actionsDiv = document.getElementById('permissionActions');
+    
+    const statusConfig = {
+        'granted': {
+            class: 'granted',
+            icon: '✅',
+            title: 'Notifications Enabled',
+            message: 'You\'re all set! You\'ll receive browser notifications for new jobs and deadlines.',
+            buttons: [
+                { text: '🔕 Disable Notifications', onclick: 'showDisableInstructions()', class: 'btn-secondary' }
+            ]
+        },
+        'denied': {
+            class: 'denied',
+            icon: '❌',
+            title: 'Notifications Blocked',
+            message: 'Browser notifications are currently blocked. Enable them in your browser settings to receive alerts.',
+            buttons: [
+                { text: '⚙️ How to Enable', onclick: 'showEnableInstructions()', class: 'btn-primary' }
+            ]
+        },
+        'default': {
+            class: 'default',
+            icon: '🔔',
+            title: 'Notifications Not Enabled',
+            message: 'Enable browser notifications to get instant alerts for new jobs and urgent deadlines.',
+            buttons: [
+                { text: '🔔 Enable Notifications', onclick: 'requestNotificationPermission()', class: 'btn-primary' }
+            ]
+        },
+        'unsupported': {
+            class: 'denied',
+            icon: '⚠️',
+            title: 'Browser Not Supported',
+            message: 'Your browser doesn\'t support notifications. Try using Chrome, Firefox, or Edge.',
+            buttons: []
+        }
+    };
+    
+    const config = statusConfig[status];
+    
+    statusDiv.className = `permission-status ${config.class}`;
+    statusDiv.innerHTML = `
+        <span style="font-size: 2.5rem;">${config.icon}</span>
+        <div style="flex: 1;">
+            <h3 style="margin: 0 0 0.5rem 0; font-weight: 700; font-size: 1.1rem;">
+                ${config.title}
+            </h3>
+            <p style="margin: 0; font-size: 0.95rem;">${config.message}</p>
+        </div>
+    `;
+    
+    actionsDiv.innerHTML = config.buttons.map(btn => `
+        <button class="btn ${btn.class}" onclick="${btn.onclick}">
+            ${btn.text}
+        </button>
+    `).join('');
+}
+
+async function requestNotificationPermission() {
+    if (window.browserNotifications) {
+        await window.browserNotifications.requestPermission();
+        checkPermissionStatus();
+    }
+}
+
+function testNotification(type) {
+    if (!window.browserNotifications) {
+        alert('Notification system not initialized');
+        return;
+    }
+    
+    const testMessages = {
+        'critical': {
+            title: '🔥 CRITICAL: Application Closing Today!',
+            message: 'Google SDE Internship deadline is in 6 hours - Apply now!'
+        },
+        'urgent': {
+            title: '⚡ URGENT: 2 Days Remaining',
+            message: 'Microsoft SDE position closes in 2 days - Don\'t miss out!'
+        },
+        'new_job': {
+            title: '💼 New Job Posted',
+            message: 'Amazon is hiring for Software Development Engineer role'
+        },
+        'deadline': {
+            title: '⏰ Reminder: Pending Applications',
+            message: 'You have 3 job applications with upcoming deadlines'
+        },
+        'success': {
+            title: '✅ Application Submitted',
+            message: 'Your application to TCS has been successfully submitted'
+        }
+    };
+    
+    const msg = testMessages[type];
+    window.browserNotifications.triggerNotification(type, msg.title, msg.message);
+}
+
+function showDisableInstructions() {
+    alert(`To disable notifications:
+
+Chrome/Edge:
+1. Click the lock icon in address bar
+2. Find "Notifications"
+3. Select "Block"
+
+Firefox:
+1. Click the lock icon
+2. Click "More Information"
+3. Go to "Permissions" tab
+4. Uncheck "Receive Notifications"`);
+}
+
+function showEnableInstructions() {
+    alert(`To enable notifications:
+
+Chrome/Edge:
+1. Click the lock icon in address bar (or three dots > Settings > Privacy)
+2. Find "Notifications"
+3. Select "Allow"
+4. Refresh this page
+
+Firefox:
+1. Click the lock icon
+2. Click "More Information"
+3. Go to "Permissions" tab
+4. Check "Receive Notifications"
+5. Refresh this page`);
+}
+
+// Check status on page load
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(checkPermissionStatus, 500);
+});
+</script>
+
+{% endblock %}

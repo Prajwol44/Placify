@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block title %}Email Reminders - PlacementPro{% endblock %}
+
+{% block content %}
+<style>
+    .settings-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+    
+    .page-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+    }
+    
+    .page-header p {
+        color: var(--gray);
+        font-size: 1.1rem;
+    }
+    
+    .settings-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+        border: 2px solid var(--border);
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--light-gray);
+    }
+    
+    .card-header h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin: 0;
+    }
+    
+    .card-icon {
+        font-size: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 2rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: var(--dark);
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .form-sublabel {
+        display: block;
+        color: var(--gray);
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+        font-weight: 400;
+    }
+    
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        font-size: 1rem;
+        font-family: inherit;
+        transition: all 0.3s;
+        background: white;
+    }
+    
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(15, 76, 129, 0.1);
+    }
+    
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .btn-container {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        box-shadow: 0 6px 20px rgba(15, 76, 129, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(15, 76, 129, 0.4);
+    }
+    
+    .btn-secondary {
+        background: var(--light-gray);
+        color: var(--dark);
+        border: 2px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+        background: var(--border);
+    }
+    
+    .info-box {
+        background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+        border-left: 4px solid #3B82F6;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-top: 1.5rem;
+    }
+    
+    .info-box-title {
+        font-weight: 700;
+        color: #1E40AF;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+    
+    .info-box-text {
+        color: #1E3A8A;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    .pending-jobs-preview {
+        background: #F9FAFB;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+    }
+    
+    .pending-jobs-preview h4 {
+        color: var(--dark);
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .pending-count {
+        background: linear-gradient(135deg, #EF4444, #DC2626);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+    
+    .logs-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    
+    .logs-table th {
+        background: var(--light-gray);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 700;
+        color: var(--dark);
+        border-bottom: 2px solid var(--border);
+    }
+    
+    .logs-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+        color: var(--gray);
+    }
+    
+    .logs-table tr:hover {
+        background: #F9FAFB;
+    }
+    
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+    
+    .status-badge.success {
+        background: #D1FAE5;
+        color: #065F46;
+    }
+    
+    .status-badge.error {
+        background: #FEE2E2;
+        color: #991B1B;
+    }
+</style>
+
+<div class="settings-container">
+    <div class="page-header">
+        <h1>
+            <span>📧</span>
+            Email Reminder Settings
+        </h1>
+        <p>Configure automated email alerts for pending job applications</p>
+    </div>
+    
+    <!-- Main Settings Card -->
+    <div class="settings-card">
+        <div class="card-header">
+            <span class="card-icon">⚙️</span>
+            <h2>Reminder Configuration</h2>
+        </div>
+        
+        <form action="{{ url_for('save_email_reminder_settings') }}" method="POST">
+            <!-- Enable/Disable Toggle -->
+            <div class="form-group">
+                <label class="form-label">
+                    Email Reminders
+                    <span class="form-sublabel">Receive automated emails about pending applications</span>
+                </label>
+                <div class="toggle-container">
+                    <label class="toggle-switch">
+                        <input type="checkbox" name="is_enabled" 
+                               {% if settings and settings['is_enabled'] %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                    <span id="toggleLabel" style="font-weight: 600; color: var(--dark);">
+                        {% if settings and settings['is_enabled'] %}Enabled{% else %}Disabled{% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Frequency Setting -->
+            <div class="form-group">
+                <label class="form-label" for="frequency_minutes">
+                    Reminder Frequency
+                    <span class="form-sublabel">How often should we send you reminders?</span>
+                </label>
+                <select name="frequency_minutes" id="frequency_minutes" class="form-control">
+                    <optgroup label="⚡ Testing Options (Minutes)">
+                        <option value="1" {% if settings and settings['reminder_frequency_minutes'] == 1 %}selected{% endif %}>
+                            Every 1 Minute (Quick Test)
+                        </option>
+                        <option value="5" {% if settings and settings['reminder_frequency_minutes'] == 5 %}selected{% endif %}>
+                            Every 5 Minutes (Testing)
+                        </option>
+                        <option value="10" {% if settings and settings['reminder_frequency_minutes'] == 10 %}selected{% endif %}>
+                            Every 10 Minutes (Testing)
+                        </option>
+                        <option value="30" {% if settings and settings['reminder_frequency_minutes'] == 30 %}selected{% endif %}>
+                            Every 30 Minutes (Testing)
+                        </option>
+                    </optgroup>
+                    <optgroup label="⏰ Production Options (Hours)">
+                        <option value="60" {% if settings and settings['reminder_frequency_minutes'] == 60 %}selected{% endif %}>
+                            Every Hour
+                        </option>
+                        <option value="360" {% if settings and settings['reminder_frequency_minutes'] == 360 %}selected{% endif %}>
+                            Every 6 Hours
+                        </option>
+                        <option value="720" {% if settings and settings['reminder_frequency_minutes'] == 720 %}selected{% endif %}>
+                            Every 12 Hours
+                        </option>
+                        <option value="1440" {% if settings and settings['reminder_frequency_minutes'] == 1440 or not settings %}selected{% endif %}>
+                            Once Daily (Recommended)
+                        </option>
+                        <option value="2880" {% if settings and settings['reminder_frequency_minutes'] == 2880 %}selected{% endif %}>
+                            Every 2 Days
+                        </option>
+                        <option value="4320" {% if settings and settings['reminder_frequency_minutes'] == 4320 %}selected{% endif %}>
+                            Every 3 Days
+                        </option>
+                    </optgroup>
+                </select>
+                <div class="info-box" style="margin-top: 1rem; background: #FFF7ED; border-left-color: #F59E0B;">
+                    <div class="info-box-title" style="color: #92400E;">⚠️ Testing Mode Notice</div>
+                    <div class="info-box-text" style="color: #78350F;">
+                        Minute-based options are for testing only. For production use, select hourly or daily options to avoid email spam.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Days Before Deadline -->
+            <div class="form-group">
+                <label class="form-label" for="days_before_deadline">
+                    Alert Threshold
+                    <span class="form-sublabel">Get notified about jobs with deadlines within this many days</span>
+                </label>
+                <select name="days_before_deadline" id="days_before_deadline" class="form-control">
+                    <option value="1" {% if settings and settings['days_before_deadline'] == 1 %}selected{% endif %}>
+                        1 Day (Very Urgent)
+                    </option>
+                    <option value="3" {% if settings and settings['days_before_deadline'] == 3 or not settings %}selected{% endif %}>
+                        3 Days (Recommended)
+                    </option>
+                    <option value="5" {% if settings and settings['days_before_deadline'] == 5 %}selected{% endif %}>
+                        5 Days
+                    </option>
+                    <option value="7" {% if settings and settings['days_before_deadline'] == 7 %}selected{% endif %}>
+                        7 Days (1 Week)
+                    </option>
+                    <option value="14" {% if settings and settings['days_before_deadline'] == 14 %}selected{% endif %}>
+                        14 Days (2 Weeks)
+                    </option>
+                </select>
+            </div>
+            
+            <!-- Info Box -->
+            <div class="info-box">
+                <div class="info-box-title">📌 How It Works</div>
+                <div class="info-box-text">
+                    <ul style="margin: 0.5rem 0 0 1.5rem; line-height: 1.8;">
+                        <li>You'll receive emails about jobs you haven't applied to yet</li>
+                        <li>Only jobs with deadlines matching your threshold will be included</li>
+                        <li>Reminders are sent based on your chosen frequency</li>
+                        <li>You can test the email format using the button below</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary">
+                    💾 Save Settings
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="sendTestEmail()">
+                    📧 Send Test Email
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Pending Jobs Preview -->
+    {% if pending_count > 0 %}
+    <div class="settings-card">
+        <div class="card-header">
+            <span class="card-icon">📋</span>
+            <h2>Pending Jobs ({{ pending_count }})</h2>
+        </div>
+        
+        <div class="pending-jobs-preview">
+            <h4>
+                <span>⏰</span>
+                You have <span class="pending-count">{{ pending_count }}</span> pending application{{ 's' if pending_count != 1 else '' }}
+            </h4>
+            <p style="color: var(--gray); margin: 0 0 1.5rem 0;">
+                These jobs will be included in your next reminder email (deadline within {{ days_threshold }} days).
+            </p>
+            
+            <!-- Pending Jobs List -->
+            <div style="margin-top: 1.5rem;">
+                {% for job in pending_jobs %}
+                <div class="job-preview-card" style="
+                    background: white;
+                    border: 2px solid {{ 'var(--error)' if job['urgency'] == 'critical' else ('var(--warning)' if job['urgency'] == 'urgent' else 'var(--border)') }};
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    margin-bottom: 1rem;
+                    {% if job['urgency'] == 'critical' %}
+                    background: #FEF2F2;
+                    animation: pulse-card 2s infinite;
+                    {% elif job['urgency'] == 'urgent' %}
+                    background: #FFFBEB;
+                    {% endif %}
+                ">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <div style="flex: 1;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.25rem; font-weight: 700; color: var(--dark);">
+                                {{ job['company'] }}
+                            </h3>
+                            <p style="margin: 0; color: var(--gray); font-size: 1rem;">
+                                {{ job['position'] or 'Position Available' }}
+                            </p>
+                        </div>
+                        <div style="
+                            padding: 0.5rem 1rem;
+                            border-radius: 20px;
+                            font-weight: 700;
+                            font-size: 0.9rem;
+                            white-space: nowrap;
+                            {% if job['urgency'] == 'critical' %}
+                            background: linear-gradient(135deg, #EF4444, #DC2626);
+                            color: white;
+                            {% elif job['urgency'] == 'urgent' %}
+                            background: linear-gradient(135deg, #F59E0B, #D97706);
+                            color: white;
+                            {% else %}
+                            background: linear-gradient(135deg, #3B82F6, #2563EB);
+                            color: white;
+                            {% endif %}
+                        ">
+                            {% if job['days_remaining'] <= 0 %}
+                            🔥 TODAY!
+                            {% elif job['days_remaining'] == 1 %}
+                            🔥 1 day
+                            {% else %}
+                            {{ '⚡' if job['days_remaining'] <= 3 else '📅' }} {{ job['days_remaining'] }} days
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                        {% if job['ctc'] %}
+                        <div style="color: var(--gray); font-size: 0.95rem;">
+                            <strong style="color: var(--dark);">💰 CTC:</strong> {{ job['ctc'] }}
+                        </div>
+                        {% endif %}
+                        {% if job['location'] %}
+                        <div style="color: var(--gray); font-size: 0.95rem;">
+                            <strong style="color: var(--dark);">📍 Location:</strong> {{ job['location'] }}
+                        </div>
+                        {% endif %}
+                        <div style="color: var(--gray); font-size: 0.95rem;">
+                            <strong style="color: var(--dark);">📅 Deadline:</strong> {{ job['deadline'] }}
+                        </div>
+                        {% if job['job_type'] %}
+                        <div style="color: var(--gray); font-size: 0.95rem;">
+                            <strong style="color: var(--dark);">💼 Type:</strong> {{ job['job_type'] }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if job['email_subject'] %}
+                    <div style="padding: 0.75rem 1rem; background: #F9FAFB; border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="font-size: 0.85rem; color: var(--gray); margin-bottom: 0.25rem;">
+                            <strong>📧 Email Subject:</strong>
+                        </div>
+                        <div style="font-size: 0.9rem; color: var(--dark);">
+                            {{ job['email_subject'][:100] }}{{ '...' if job['email_subject']|length > 100 else '' }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <a href="{{ url_for('jobs') }}#job-{{ job['job_id'] }}" 
+                           class="btn btn-primary" 
+                           style="padding: 0.75rem 1.5rem; text-decoration: none; font-size: 0.95rem;">
+                            View & Apply →
+                        </a>
+                        {% if job['job_link'] %}
+                        <a href="{{ job['job_link'] }}" 
+                           target="_blank"
+                           class="btn btn-secondary" 
+                           style="padding: 0.75rem 1.5rem; text-decoration: none; font-size: 0.95rem;">
+                            External Link 🔗
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <style>
+    @keyframes pulse-card {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    }
+    </style>
+    {% endif %}
+    
+    <!-- Email Logs -->
+    {% if logs %}
+    <div class="settings-card">
+        <div class="card-header">
+            <span class="card-icon">📜</span>
+            <h2>Recent Email History</h2>
+        </div>
+        
+        <table class="logs-table">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Jobs Included</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log['sent_at'] }}</td>
+                    <td>{{ log['jobs_count'] }} job{{ 's' if log['jobs_count'] != 1 else '' }}</td>
+                    <td>
+                        {% if log['email_sent'] %}
+                        <span class="status-badge success">✓ Sent</span>
+                        {% else %}
+                        <span class="status-badge error">✗ Failed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Toggle label update
+document.querySelector('input[name="is_enabled"]').addEventListener('change', function() {
+    document.getElementById('toggleLabel').textContent = this.checked ? 'Enabled' : 'Disabled';
+});
+
+// Send test email
+async function sendTestEmail() {
+    const button = event.target;
+    button.disabled = true;
+    button.textContent = '📧 Sending...';
+    
+    try {
+        const response = await fetch('/send-test-reminder', {
+            method: 'POST'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('✅ Test email sent successfully! Check your inbox.');
+        } else {
+            alert('❌ ' + (data.error || 'Failed to send test email'));
+        }
+    } catch (error) {
+        alert('❌ Error sending test email: ' + error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = '📧 Send Test Email';
+    }
+}
+</script>
+
+{% endblock %}

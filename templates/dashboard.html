@@ -1,0 +1,1150 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PlacementPro{% endblock %}
+
+{% block content %}
+<style>
+    /* Dashboard Container */
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    /* Welcome Banner - Premium Design */
+    .welcome-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 28px;
+        padding: 4rem 3rem;
+        margin-bottom: 3rem;
+        color: white;
+        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .welcome-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: pulse-welcome 10s infinite ease-in-out;
+    }
+
+    .welcome-banner::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -15%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: pulse-welcome 8s infinite ease-in-out reverse;
+    }
+
+    @keyframes pulse-welcome {
+        0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.5; }
+        50% { transform: scale(1.15) translate(20px, 20px); opacity: 0.8; }
+    }
+
+    .welcome-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .welcome-text h1 {
+        font-size: 3.2rem;
+        font-weight: 900;
+        margin-bottom: 0.75rem;
+        letter-spacing: -1.5px;
+        text-shadow: 0 3px 15px rgba(0, 0, 0, 0.15);
+        line-height: 1.1;
+    }
+
+    .welcome-text p {
+        font-size: 1.35rem;
+        opacity: 0.95;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    .welcome-badges {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .welcome-badge {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(15px);
+        padding: 1rem 1.75rem;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Main Stats Grid */
+    .stats-main-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: var(--stat-gradient);
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: var(--stat-bg-pattern);
+        border-radius: 50%;
+        opacity: 0.1;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+        border-color: var(--stat-border);
+    }
+
+    /* Stat Card Variants */
+    .stat-card.primary { 
+        --stat-gradient: linear-gradient(90deg, #3B82F6, #2563EB);
+        --stat-border: #3B82F6;
+        --stat-bg-pattern: radial-gradient(circle, #3B82F6, transparent);
+    }
+    .stat-card.success { 
+        --stat-gradient: linear-gradient(90deg, #10B981, #059669);
+        --stat-border: #10B981;
+        --stat-bg-pattern: radial-gradient(circle, #10B981, transparent);
+    }
+    .stat-card.warning { 
+        --stat-gradient: linear-gradient(90deg, #F59E0B, #D97706);
+        --stat-border: #F59E0B;
+        --stat-bg-pattern: radial-gradient(circle, #F59E0B, transparent);
+    }
+    .stat-card.danger { 
+        --stat-gradient: linear-gradient(90deg, #DC2626, #B91C1C);
+        --stat-border: #DC2626;
+        --stat-bg-pattern: radial-gradient(circle, #DC2626, transparent);
+    }
+    .stat-card.purple { 
+        --stat-gradient: linear-gradient(90deg, #8B5CF6, #7C3AED);
+        --stat-border: #8B5CF6;
+        --stat-bg-pattern: radial-gradient(circle, #8B5CF6, transparent);
+    }
+    .stat-card.info { 
+        --stat-gradient: linear-gradient(90deg, #06B6D4, #0891B2);
+        --stat-border: #06B6D4;
+        --stat-bg-pattern: radial-gradient(circle, #06B6D4, transparent);
+    }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-icon {
+        width: 75px;
+        height: 75px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        background: var(--stat-icon-bg);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .stat-card.primary .stat-icon { background: linear-gradient(135deg, #EFF6FF, #DBEAFE); }
+    .stat-card.success .stat-icon { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); }
+    .stat-card.warning .stat-icon { background: linear-gradient(135deg, #FFFBEB, #FEF3C7); }
+    .stat-card.danger .stat-icon { 
+        background: linear-gradient(135deg, #FEF2F2, #FEE2E2);
+        animation: pulse-danger 2.5s infinite;
+    }
+    .stat-card.purple .stat-icon { background: linear-gradient(135deg, #F5F3FF, #EDE9FE); }
+    .stat-card.info .stat-icon { background: linear-gradient(135deg, #ECFEFF, #CFFAFE); }
+
+    @keyframes pulse-danger {
+        0%, 100% { box-shadow: 0 6px 20px rgba(220, 38, 38, 0.2); }
+        50% { box-shadow: 0 8px 30px rgba(220, 38, 38, 0.4); }
+    }
+
+    .stat-trend {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        background: rgba(16, 185, 129, 0.1);
+        color: #059669;
+    }
+
+    .stat-body {
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-value {
+        font-size: 4rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 0.75rem;
+        background: var(--stat-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-label {
+        color: var(--gray);
+        font-size: 1.1rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        line-height: 1.4;
+    }
+
+    .stat-sublabel {
+        color: var(--gray);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        opacity: 0.7;
+    }
+
+    /* Progress Cards */
+    .progress-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .progress-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .progress-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2.5rem;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+        border: 2px solid transparent;
+        transition: all 0.3s;
+    }
+
+    .progress-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+        border-color: var(--primary);
+    }
+
+    .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .progress-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    .progress-percentage {
+        font-size: 2rem;
+        font-weight: 900;
+        color: var(--primary);
+    }
+
+    .progress-bar-container {
+        width: 100%;
+        height: 12px;
+        background: #e5e7eb;
+        border-radius: 50px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary), var(--accent));
+        border-radius: 50px;
+        transition: width 1s ease;
+    }
+
+    .progress-details {
+        display: flex;
+        justify-content: space-between;
+        color: var(--gray);
+        font-size: 0.95rem;
+    }
+
+    /* Quick Actions Grid */
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .action-card {
+        background: white;
+        border-radius: 24px;
+        padding: 3rem 2.5rem;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+        border: 2px solid transparent;
+        transition: all 0.4s;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .action-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: var(--action-gradient);
+        border-radius: 50%;
+        opacity: 0.05;
+    }
+
+    .action-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary);
+    }
+
+    .action-card:hover::before {
+        opacity: 0.1;
+    }
+
+    .action-card.primary { --action-gradient: radial-gradient(circle, #3B82F6, transparent); }
+    .action-card.success { --action-gradient: radial-gradient(circle, #10B981, transparent); }
+    .action-card.warning { --action-gradient: radial-gradient(circle, #F59E0B, transparent); }
+
+    .action-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+        transition: transform 0.3s;
+    }
+
+    .action-card:hover .action-icon {
+        transform: scale(1.2) rotateY(180deg);
+    }
+
+    .action-card h3 {
+        color: var(--dark);
+        font-weight: 800;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .action-card p {
+        color: var(--gray);
+        font-size: 1.05rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1.05rem;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        box-shadow: 0 6px 20px rgba(15, 76, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(15, 76, 129, 0.4);
+    }
+
+    .btn-secondary {
+        background: linear-gradient(135deg, #6B7280, #4B5563);
+        color: white;
+        box-shadow: 0 6px 20px rgba(107, 114, 128, 0.3);
+    }
+
+    .btn-secondary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(107, 114, 128, 0.4);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .welcome-text h1 {
+            font-size: 2.2rem;
+        }
+
+        .welcome-content {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .stats-main-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+        }
+
+        .progress-grid,
+        .actions-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<style>
+    /* Notification Bell */
+    .notification-bell {
+        position: relative;
+        cursor: pointer;
+        margin-right: 1rem;
+    }
+    
+    .bell-icon {
+        font-size: 1.5rem;
+        color: var(--dark);
+        transition: all 0.3s;
+    }
+    
+    .bell-icon:hover {
+        color: var(--primary);
+        transform: scale(1.1);
+    }
+    
+    .notification-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #EF4444, #DC2626);
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 6px;
+        border-radius: 50%;
+        min-width: 20px;
+        text-align: center;
+        animation: pulse-badge 2s infinite;
+    }
+    
+    @keyframes pulse-badge {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+        50% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    }
+    
+    /* Notification Dropdown */
+    .notification-dropdown {
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        width: 420px;
+        max-height: 600px;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        display: none;
+        overflow: hidden;
+        border: 1px solid var(--border);
+    }
+    
+    .notification-dropdown.show {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .notification-header {
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .notification-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    
+    .mark-all-read {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+    
+    .mark-all-read:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    .notification-list {
+        max-height: 450px;
+        overflow-y: auto;
+    }
+    
+    .notification-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+    }
+    
+    .notification-item:hover {
+        background: #F9FAFB;
+    }
+    
+    .notification-item.unread {
+        background: #EFF6FF;
+        border-left: 4px solid #3B82F6;
+    }
+    
+    .notification-item.unread::before {
+        content: '';
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 8px;
+        height: 8px;
+        background: #3B82F6;
+        border-radius: 50%;
+    }
+    
+    .notification-icon {
+        font-size: 1.8rem;
+        margin-right: 0.75rem;
+        float: left;
+    }
+    
+    .notification-content {
+        overflow: hidden;
+    }
+    
+    .notification-title {
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
+        line-height: 1.3;
+    }
+    
+    .notification-message {
+        color: var(--gray);
+        font-size: 0.88rem;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
+    
+    .notification-time {
+        font-size: 0.75rem;
+        color: var(--gray);
+        font-weight: 600;
+    }
+    
+    .notification-footer {
+        padding: 1rem 1.5rem;
+        text-align: center;
+        background: #F9FAFB;
+        border-top: 1px solid var(--border);
+    }
+    
+    .notification-footer a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+    
+    .empty-notifications {
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: var(--gray);
+    }
+    
+    .empty-notifications-icon {
+        font-size: 3rem;
+        opacity: 0.3;
+        margin-bottom: 1rem;
+    }
+    
+    /* Alert Banner on Dashboard */
+    .alert-banner {
+        background: linear-gradient(135deg, #FEE2E2, #FECACA);
+        border: 2px solid #EF4444;
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        animation: pulse-alert 2s infinite;
+    }
+    
+    @keyframes pulse-alert {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    }
+    
+    .alert-banner-icon {
+        font-size: 3rem;
+        animation: shake 0.5s infinite;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(-10deg); }
+        75% { transform: rotate(10deg); }
+    }
+    
+    .alert-banner-content {
+        flex: 1;
+    }
+    
+    .alert-banner-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #DC2626;
+        margin-bottom: 0.5rem;
+    }
+    
+    .alert-banner-text {
+        color: #991B1B;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+    
+    .alert-banner-button {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #EF4444, #DC2626);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+    }
+    
+    .alert-banner-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    /* Copy all other styles from original dashboard */
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    .welcome-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 28px;
+        padding: 4rem 3rem;
+        margin-bottom: 3rem;
+        color: white;
+        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+    
+ </style>
+
+<div class="dashboard-container">
+    <!-- Critical Alert Banner (shows if critical deadlines exist) -->
+    {% if stats['critical'] > 0 %}
+    <div class="alert-banner">
+        <div class="alert-banner-icon">🔥</div>
+        <div class="alert-banner-content">
+            <div class="alert-banner-title">URGENT: {{ stats['critical'] }} Application{{ 's' if stats['critical'] != 1 else '' }} Expiring Soon!</div>
+            <div class="alert-banner-text">
+                You have critical deadlines within 3 days. Act now to avoid missing opportunities!
+            </div>
+        </div>
+        <a href="{{ url_for('jobs') }}" class="alert-banner-button">View Jobs →</a>
+    </div>
+    {% endif %}
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner">
+        <div class="welcome-content">
+            <div class="welcome-text">
+                <h1>Welcome back, {{ student['name'] }}! 👋</h1>
+                <p>Track your placement journey and opportunities</p>
+            </div>
+            <div class="welcome-badges">
+                <div class="welcome-badge">
+                    <span>📅</span>
+                    <span>Today</span>
+                </div>
+                {% if stats['critical'] > 0 %}
+                <div class="welcome-badge" style="background: rgba(220, 38, 38, 0.3);">
+                    <span>🔥</span>
+                    <span>{{ stats['critical'] }} Critical</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Statistics Grid -->
+    <div class="stats-main-grid">
+        <!-- Critical Deadlines -->
+        <div class="stat-card danger">
+            <div class="stat-header">
+                <div class="stat-icon">🔥</div>
+            </div>
+            <div class="stat-body">
+                <div class="stat-value">{{ stats['critical'] }}</div>
+                <div class="stat-label">Critical Deadlines</div>
+                <div class="stat-sublabel">Applications closing within 3 days</div>
+            </div>
+        </div>
+
+        <!-- Urgent Jobs -->
+        <div class="stat-card warning">
+            <div class="stat-header">
+                <div class="stat-icon">⚡</div>
+            </div>
+            <div class="stat-body">
+                <div class="stat-value">{{ stats['urgent'] }}</div>
+                <div class="stat-label">Urgent Opportunities</div>
+                <div class="stat-sublabel">Closing within 7 days</div>
+            </div>
+        </div>
+
+        <!-- Applications Submitted -->
+        <div class="stat-card success">
+            <div class="stat-header">
+                <div class="stat-icon">✅</div>
+                {% if stats['recent_activity'] > 0 %}
+                <div class="stat-trend">
+                    <span>📈</span>
+                    <span>+{{ stats['recent_activity'] }} this week</span>
+                </div>
+                {% endif %}
+            </div>
+            <div class="stat-body">
+                <div class="stat-value">{{ stats['applied'] }}</div>
+                <div class="stat-label">Applications Submitted</div>
+                <div class="stat-sublabel">Total applications sent</div>
+            </div>
+        </div>
+
+        <!-- Pending Opportunities -->
+        <div class="stat-card info">
+            <div class="stat-header">
+                <div class="stat-icon">⏳</div>
+            </div>
+            <div class="stat-body">
+                <div class="stat-value">{{ stats['pending'] }}</div>
+                <div class="stat-label">Pending Opportunities</div>
+                <div class="stat-sublabel">Jobs you haven't applied to yet</div>
+            </div>
+        </div>
+
+        <!-- Active Jobs -->
+        <div class="stat-card primary">
+            <div class="stat-header">
+                <div class="stat-icon">💼</div>
+            </div>
+            <div class="stat-body">
+                <div class="stat-value">{{ stats['total_jobs'] }}</div>
+                <div class="stat-label">Active Job Openings</div>
+                <div class="stat-sublabel">Currently available positions</div>
+            </div>
+        </div>
+
+        <!-- Resumes -->
+        <div class="stat-card purple">
+            <div class="stat-header">
+                <div class="stat-icon">📄</div>
+            </div>
+            <div class="stat-body">
+                <div class="stat-value">{{ stats['resumes'] }}</div>
+                <div class="stat-label">Resumes Uploaded</div>
+                <div class="stat-sublabel">AI-analyzed documents</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section">
+        <h2 class="section-title">
+            <span>📊</span>
+            <span>Your Progress</span>
+        </h2>
+
+        <div class="progress-grid">
+            <!-- Application Progress -->
+            <div class="progress-card">
+                <div class="progress-header">
+                    <div class="progress-title">Application Activity</div>
+                    <div class="progress-percentage">
+                        {% if stats['total_jobs'] > 0 %}
+                        {{ (stats['applied'] * 100 // stats['total_jobs']) }}%
+                        {% else %}
+                        0%
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {% if stats['total_jobs'] > 0 %}{{ (stats['applied'] * 100 / stats['total_jobs']) }}%{% else %}0%{% endif %}"></div>
+                </div>
+                <div class="progress-details">
+                    <span>{{ stats['applied'] }} applied</span>
+                    <span>{{ stats['total_jobs'] }} total</span>
+                </div>
+            </div>
+
+            <!-- Success Rate -->
+            <div class="progress-card">
+                <div class="progress-header">
+                    <div class="progress-title">Success Rate</div>
+                    <div class="progress-percentage" style="color: #10B981;">{{ stats['success_rate'] }}%</div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {{ stats['success_rate'] }}%; background: linear-gradient(90deg, #10B981, #059669);"></div>
+                </div>
+                <div class="progress-details">
+                    <span>{{ stats['accepted'] }} accepted</span>
+                    <span>{{ stats['applied'] }} applied</span>
+                </div>
+            </div>
+
+            <!-- Profile Completion -->
+            <div class="progress-card">
+                <div class="progress-header">
+                    <div class="progress-title">Profile Completion</div>
+                    <div class="progress-percentage" style="color: #8B5CF6;">
+                        {% if stats['resumes'] > 0 %}100%{% else %}50%{% endif %}
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {% if stats['resumes'] > 0 %}100%{% else %}50%{% endif %}; background: linear-gradient(90deg, #8B5CF6, #7C3AED);"></div>
+                </div>
+                <div class="progress-details">
+                    <span>{% if stats['resumes'] > 0 %}Complete{% else %}Resume needed{% endif %}</span>
+                    <span>{{ stats['resumes'] }} resumes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-title">
+        <span>⚡</span>
+        <span>Quick Actions</span>
+    </div>
+
+    <div class="actions-grid">
+        <div class="action-card primary">
+            <div class="action-icon">🔍</div>
+            <h3>Browse Jobs</h3>
+            <p>Explore {{ stats['total_jobs'] }} active opportunities and find your perfect match</p>
+            <a href="{{ url_for('jobs') }}" class="btn btn-primary">View All Jobs</a>
+        </div>
+
+        <div class="action-card success">
+            <div class="action-icon">📄</div>
+            <h3>Upload Resume</h3>
+            <p>Add your latest resume for AI-powered analysis and better job matching</p>
+            <a href="{{ url_for('profile') }}" class="btn btn-primary">Upload Now</a>
+        </div>
+
+        <div class="action-card warning">
+            <div class="action-icon">👤</div>
+            <h3>Update Profile</h3>
+            <p>Keep your information current to get matched with relevant opportunities</p>
+            <a href="{{ url_for('profile') }}" class="btn btn-secondary">Edit Profile</a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes pulse-badge {
+    0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.4); }
+    50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.7); }
+}
+</style>
+<!-- Notification Dropdown (placed in navbar via JavaScript) -->
+<div id="notificationDropdown" class="notification-dropdown">
+    <div class="notification-header">
+        <h3>🔔 Notifications</h3>
+        <button class="mark-all-read" onclick="markAllNotificationsRead()">Mark all read</button>
+    </div>
+    <div class="notification-list" id="notificationList">
+        <div class="empty-notifications">
+            <div class="empty-notifications-icon">🔔</div>
+            <p>Loading notifications...</p>
+        </div>
+    </div>
+    <div class="notification-footer">
+        <a href="{{ url_for('email_reminders_settings') }}">Manage Notification Settings</a>
+    </div>
+</div>
+
+<script>
+let notificationDropdownVisible = false;
+
+// Load notifications on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadNotifications();
+    addNotificationBell();
+    
+    // Refresh notifications every 30 seconds
+    setInterval(loadNotifications, 30000);
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('notificationDropdown');
+        const bell = document.getElementById('notificationBell');
+        
+        if (!dropdown.contains(event.target) && !bell.contains(event.target)) {
+            dropdown.classList.remove('show');
+            notificationDropdownVisible = false;
+        }
+    });
+});
+
+function addNotificationBell() {
+    // Add notification bell to navbar
+    const navbarMenu = document.querySelector('.navbar-menu');
+    if (navbarMenu) {
+        const bellContainer = document.createElement('div');
+        bellContainer.className = 'notification-bell';
+        bellContainer.id = 'notificationBell';
+        bellContainer.innerHTML = `
+            <span class="bell-icon" onclick="toggleNotifications()">🔔</span>
+            <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+        `;
+        
+        // Insert before first link
+        navbarMenu.insertBefore(bellContainer, navbarMenu.firstChild);
+    }
+}
+
+function toggleNotifications() {
+    const dropdown = document.getElementById('notificationDropdown');
+    notificationDropdownVisible = !notificationDropdownVisible;
+    
+    if (notificationDropdownVisible) {
+        dropdown.classList.add('show');
+        loadNotifications();
+    } else {
+        dropdown.classList.remove('show');
+    }
+}
+
+async function loadNotifications() {
+    try {
+        const response = await fetch('/api/notifications?limit=20');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateNotificationBadge(data.unread_count);
+            renderNotifications(data.notifications);
+        }
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+    }
+}
+
+function updateNotificationBadge(count) {
+    const badge = document.getElementById('notificationBadge');
+    if (badge) {
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.style.display = 'block';
+        } else {
+            badge.style.display = 'none';
+        }
+    }
+}
+
+function renderNotifications(notifications) {
+    const list = document.getElementById('notificationList');
+    
+    if (notifications.length === 0) {
+        list.innerHTML = `
+            <div class="empty-notifications">
+                <div class="empty-notifications-icon">🔔</div>
+                <p>No notifications yet</p>
+            </div>
+        `;
+        return;
+    }
+    
+    list.innerHTML = notifications.map(notif => {
+        const icon = getNotificationIcon(notif.type);
+        const timeAgo = getTimeAgo(notif.created_at);
+        const unreadClass = notif.is_read ? '' : 'unread';
+        
+        return `
+            <div class="notification-item ${unreadClass}" 
+                 onclick="handleNotificationClick(${notif.notification_id}, ${notif.job_id})">
+                <span class="notification-icon">${icon}</span>
+                <div class="notification-content">
+                    <div class="notification-title">${notif.title}</div>
+                    <div class="notification-message">${notif.message}</div>
+                    <div class="notification-time">${timeAgo}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function getNotificationIcon(type) {
+    const icons = {
+        'critical': '🔥',
+        'urgent': '⚡',
+        'new_job': '💼',
+        'deadline': '⏰',
+        'application': '✅',
+        'default': '🔔'
+    };
+    return icons[type] || icons['default'];
+}
+
+function getTimeAgo(timestamp) {
+    const now = new Date();
+    const time = new Date(timestamp);
+    const diffMs = now - time;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min${diffMins !== 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+    return time.toLocaleDateString();
+}
+
+async function handleNotificationClick(notificationId, jobId) {
+    // Mark as read
+    try {
+        await fetch(`/api/notifications/${notificationId}/read`, {
+            method: 'POST'
+        });
+        
+        // Reload notifications
+        await loadNotifications();
+        
+        // Navigate to job if exists
+        if (jobId) {
+            window.location.href = `/jobs#job-${jobId}`;
+        }
+    } catch (error) {
+        console.error('Error handling notification click:', error);
+    }
+}
+
+async function markAllNotificationsRead() {
+    try {
+        const response = await fetch('/api/notifications/mark-all-read', {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            await loadNotifications();
+        }
+    } catch (error) {
+        console.error('Error marking all notifications read:', error);
+    }
+}
+</script>
+
+
+{% endblock %}

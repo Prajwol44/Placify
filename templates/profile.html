@@ -1,0 +1,916 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - PlacementPro{% endblock %}
+
+{% block content %}
+<style>
+    /* Profile Header */
+    .profile-banner {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 20px 20px 0 0;
+        padding: 3rem 2.5rem 5rem;
+        margin-bottom: -3rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-banner::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    .profile-header-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .profile-avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--primary);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        border: 4px solid white;
+    }
+
+    .profile-info-header {
+        flex: 1;
+    }
+
+    .profile-info-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .profile-meta-header {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+        opacity: 0.95;
+    }
+
+    .profile-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    /* Main Profile Container */
+    .profile-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--shadow-xl);
+        padding: 3rem 2.5rem 2.5rem;
+        border: 1px solid var(--border);
+    }
+
+    .profile-tabs {
+        display: flex;
+        gap: 1rem;
+        border-bottom: 2px solid var(--border);
+        margin-bottom: 2.5rem;
+    }
+
+    .profile-tab {
+        padding: 1rem 1.5rem;
+        border: none;
+        background: none;
+        color: var(--gray);
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+        position: relative;
+        top: 2px;
+        font-size: 1rem;
+    }
+
+    .profile-tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    .tab-content {
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Form Styling */
+    .form-section {
+        margin-bottom: 2.5rem;
+    }
+
+    .form-section-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.6rem;
+        color: var(--dark);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.9rem 1.1rem;
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        font-family: inherit;
+        background: var(--light-gray);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .form-group small {
+        color: var(--gray);
+        font-size: 0.85rem;
+        margin-top: 0.4rem;
+        display: block;
+    }
+
+    .btn-update {
+        width: 100%;
+        padding: 1.1rem;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 1rem;
+    }
+
+    .btn-update:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Resume Upload - NEW DESIGN */
+    .upload-container {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 2px dashed var(--border);
+        margin-bottom: 2.5rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .upload-container:hover {
+        border-color: var(--primary);
+        background: rgba(15, 76, 129, 0.02);
+    }
+
+    .upload-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    .upload-text {
+        margin-bottom: 1.5rem;
+    }
+
+    .upload-text h3 {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-text p {
+        color: var(--gray);
+        font-size: 1rem;
+    }
+
+    .btn-upload {
+        padding: 1rem 2.5rem;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .btn-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .upload-info {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .upload-info-item {
+        text-align: center;
+    }
+
+    .upload-info-value {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .upload-info-label {
+        color: var(--gray);
+        font-size: 0.85rem;
+    }
+
+    /* Resume Cards */
+    .resume-list {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .resume-card {
+        background: white;
+        border: 2px solid var(--border);
+        border-radius: 16px;
+        padding: 0;
+        transition: all 0.3s;
+        overflow: hidden;
+    }
+
+    .resume-card:hover {
+        border-color: var(--primary);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .resume-header {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        padding: 1.5rem;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .resume-header-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .resume-icon-large {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .resume-header-info h4 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+
+    .resume-header-info p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .btn-delete {
+        padding: 0.6rem 1.2rem;
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-delete:hover {
+        background: #DC2626;
+        transform: scale(1.05);
+    }
+
+    .resume-body {
+        padding: 1.5rem;
+    }
+
+    .extracted-section {
+        margin-bottom: 1.5rem;
+    }
+
+    .extracted-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-label {
+        font-weight: 700;
+        color: var(--dark);
+        font-size: 0.9rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-content {
+        background: var(--light-gray);
+        padding: 1rem;
+        border-radius: 10px;
+        color: var(--gray);
+        line-height: 1.6;
+    }
+
+    .skills-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .skill-tag {
+        padding: 0.4rem 0.9rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--primary);
+    }
+
+    .education-item, .experience-item, .project-item {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        border-left: 3px solid var(--primary);
+    }
+
+    .education-item:last-child,
+    .experience-item:last-child,
+    .project-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .item-title {
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 0.3rem;
+    }
+
+    .item-subtitle {
+        color: var(--gray);
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .item-description {
+        color: var(--gray);
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .empty-state-resume {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: var(--gray);
+    }
+
+    .empty-state-resume-icon {
+        font-size: 5rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.5;
+    }
+
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .loading-overlay.active {
+        display: flex;
+    }
+
+    .loading-content {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 16px;
+        text-align: center;
+        max-width: 400px;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid var(--light-gray);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1.5rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-content h3 {
+        color: var(--dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .loading-content p {
+        color: var(--gray);
+    }
+
+    @media (max-width: 768px) {
+        .profile-header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-meta-header {
+            justify-content: center;
+        }
+
+        .profile-tabs {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .upload-info {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .resume-header {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .resume-header-left {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="profile-banner">
+    <div class="profile-header-content">
+        <div class="profile-avatar-large">
+            {{ student['name'][0].upper() }}
+        </div>
+        <div class="profile-info-header">
+            <h1>{{ student['name'] }}</h1>
+            <div class="profile-meta-header">
+                <span class="profile-meta-item">
+                    <span>📧</span> {{ session.email }}
+                </span>
+                <span class="profile-meta-item">
+                    <span>🎓</span> {{ student['roll_no'] }}
+                </span>
+                {% if student['cgpa'] %}
+                <span class="profile-meta-item">
+                    <span>📊</span> CGPA: {{ student['cgpa'] }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="profile-container">
+    <div class="profile-tabs">
+        <button class="profile-tab active" onclick="switchTab('profile')">
+            👤 Profile Information
+        </button>
+        <button class="profile-tab" onclick="switchTab('resumes')">
+            📄 Resume Management
+        </button>
+    </div>
+
+    <!-- Profile Tab -->
+    <div id="profile-tab" class="tab-content active">
+        <form method="POST" action="{{ url_for('profile') }}">
+            <div class="form-section">
+                <div class="form-section-title">
+                    <span>📝</span> Basic Information
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" value="{{ student['name'] }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" value="{{ student['phone'] or '' }}" placeholder="+91 9876543210">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cgpa">CGPA / Percentage</label>
+                        <input type="number" id="cgpa" name="cgpa" step="0.01" min="0" max="10" value="{{ student['cgpa'] or '' }}" placeholder="8.5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">
+                    <span>💼</span> Professional Skills
+                </div>
+                <div class="form-group">
+                    <label for="skills">Technical Skills</label>
+                    <textarea id="skills" name="skills" placeholder="Python, Java, Machine Learning, React, Node.js, SQL, Docker...">{{ student['skills'] or '' }}</textarea>
+                    <small>Comma-separated list of your technical skills</small>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">
+                    <span>🔗</span> Social Links
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="linkedin_url">LinkedIn Profile</label>
+                        <input type="url" id="linkedin_url" name="linkedin_url" value="{{ student['linkedin_url'] or '' }}" placeholder="https://linkedin.com/in/yourprofile">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="github_url">GitHub Profile</label>
+                        <input type="url" id="github_url" name="github_url" value="{{ student['github_url'] or '' }}" placeholder="https://github.com/yourusername">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="portfolio_url">Portfolio Website</label>
+                        <input type="url" id="portfolio_url" name="portfolio_url" value="{{ student['portfolio_url'] or '' }}" placeholder="https://yourportfolio.com">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-update">💾 Save Profile</button>
+        </form>
+    </div>
+
+    <!-- Resumes Tab -->
+    <div id="resumes-tab" class="tab-content">
+        <!-- Upload Section -->
+        <div class="upload-container">
+            <div class="upload-icon">📤</div>
+            <div class="upload-text">
+                <h3>Upload Your Resume</h3>
+                <p>Let AI analyze your resume and extract key information</p>
+            </div>
+            <form method="POST" action="{{ url_for('upload_resume') }}" enctype="multipart/form-data" id="resumeForm">
+                <input type="file" id="resumeInput" name="resume" accept=".pdf" style="display: none;" onchange="handleFileUpload()">
+                <button type="button" class="btn-upload" onclick="document.getElementById('resumeInput').click()">
+                    <span>📄</span> Choose PDF File
+                </button>
+            </form>
+            <div class="upload-info">
+                <div class="upload-info-item">
+                    <div class="upload-info-value">🤖 AI</div>
+                    <div class="upload-info-label">Powered Analysis</div>
+                </div>
+                <div class="upload-info-item">
+                    <div class="upload-info-value">16 MB</div>
+                    <div class="upload-info-label">Max File Size</div>
+                </div>
+                <div class="upload-info-item">
+                    <div class="upload-info-value">PDF</div>
+                    <div class="upload-info-label">Format Only</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resume List -->
+        <div class="form-section">
+            <div class="form-section-title">
+                <span>📚</span> Your Resumes ({{ resumes|length }})
+            </div>
+
+            {% if resumes %}
+                <div class="resume-list">
+                    {% for resume in resumes %}
+                    <div class="resume-card">
+                        <div class="resume-header">
+                            <div class="resume-header-left">
+                                <div class="resume-icon-large">📄</div>
+                                <div class="resume-header-info">
+                                    <h4>{{ resume['filename'].split('_', 2)[-1] }}</h4>
+                                    <p>Uploaded: {{ resume['upload_date'][:10] }} • AI Analyzed</p>
+                                </div>
+                            </div>
+                            <form method="POST" action="{{ url_for('delete_resume', resume_id=resume['resume_id']) }}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this resume?');">
+                                <button type="submit" class="btn-delete">
+                                    <span>🗑️</span> Delete
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="resume-body">
+                            {% if resume['summary'] %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>💡</span> Professional Summary
+                                </div>
+                                <div class="section-content">
+                                    {{ resume['summary'] }}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resume['technical_skills'] %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>⚙️</span> Technical Skills
+                                </div>
+                                <div class="section-content">
+                                    <div class="skills-grid">
+                                        {% for skill in resume['technical_skills'].split(', ') %}
+                                        <span class="skill-tag">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resume['soft_skills'] %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>🤝</span> Soft Skills
+                                </div>
+                                <div class="section-content">
+                                    <div class="skills-grid">
+                                        {% for skill in resume['soft_skills'].split(', ') %}
+                                        <span class="skill-tag">{{ skill }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resume['education'] and resume['education'] != '[]' %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>🎓</span> Education
+                                </div>
+                                <div class="section-content">
+                                    {% set education_data = resume['education']|safe %}
+                                    {% if education_data %}
+                                        {% for edu in education_data|from_json %}
+                                        <div class="education-item">
+                                            <div class="item-title">{{ edu.degree or 'Degree' }}</div>
+                                            <div class="item-subtitle">{{ edu.institution or 'Institution' }} • {{ edu.year or 'Year' }}</div>
+                                            {% if edu.cgpa %}
+                                            <div class="item-description">CGPA: {{ edu.cgpa }}</div>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resume['experience'] and resume['experience'] != '[]' %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>💼</span> Experience
+                                </div>
+                                <div class="section-content">
+                                    {% set experience_data = resume['experience']|safe %}
+                                    {% if experience_data %}
+                                        {% for exp in experience_data|from_json %}
+                                        <div class="experience-item">
+                                            <div class="item-title">{{ exp.role or 'Role' }}</div>
+                                            <div class="item-subtitle">{{ exp.company or 'Company' }} • {{ exp.duration or 'Duration' }}</div>
+                                            {% if exp.description %}
+                                            <div class="item-description">{{ exp.description }}</div>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resume['projects'] and resume['projects'] != '[]' %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>🚀</span> Projects
+                                </div>
+                                <div class="section-content">
+                                    {% set projects_data = resume['projects']|safe %}
+                                    {% if projects_data %}
+                                        {% for project in projects_data|from_json %}
+                                        <div class="project-item">
+                                            <div class="item-title">{{ project.name or 'Project' }}</div>
+                                            {% if project.description %}
+                                            <div class="item-description">{{ project.description }}</div>
+                                            {% endif %}
+                                            {% if project.technologies %}
+                                            <div class="skills-grid" style="margin-top: 0.5rem;">
+                                                {% for tech in project.technologies %}
+                                                <span class="skill-tag">{{ tech }}</span>
+                                                {% endfor %}
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resume['certifications'] %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>🏆</span> Certifications
+                                </div>
+                                <div class="section-content">
+                                    <div class="skills-grid">
+                                        {% for cert in resume['certifications'].split(', ') %}
+                                        <span class="skill-tag">{{ cert }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if resume['languages'] %}
+                            <div class="extracted-section">
+                                <div class="section-label">
+                                    <span>🌐</span> Languages
+                                </div>
+                                <div class="section-content">
+                                    <div class="skills-grid">
+                                        {% for lang in resume['languages'].split(', ') %}
+                                        <span class="skill-tag">{{ lang }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state-resume">
+                    <div class="empty-state-resume-icon">📭</div>
+                    <h3>No Resumes Uploaded Yet</h3>
+                    <p>Upload your first resume to get AI-powered insights and recommendations</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+        <div class="loading-spinner"></div>
+        <h3>Analyzing Resume...</h3>
+        <p>Please wait while AI extracts information from your resume</p>
+    </div>
+</div>
+
+<script>
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.profile-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function handleFileUpload() {
+        const fileInput = document.getElementById('resumeInput');
+        const file = fileInput.files[0];
+        
+        if (file) {
+            // Check file type
+            if (file.type !== 'application/pdf') {
+                alert('Please upload a PDF file only');
+                fileInput.value = '';
+                return;
+            }
+            
+            // Check file size (16MB)
+            if (file.size > 16 * 1024 * 1024) {
+                alert('File size must be less than 16MB');
+                fileInput.value = '';
+                return;
+            }
+            
+            // Show loading overlay
+            document.getElementById('loadingOverlay').classList.add('active');
+            
+            // Submit form
+            document.getElementById('resumeForm').submit();
+        }
+    }
+</script>
+
+{% endblock %}

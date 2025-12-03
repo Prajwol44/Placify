@@ -1,0 +1,941 @@
+{% extends "base.html" %}
+
+{% block title %}Home - PlacementPro{% endblock %}
+
+{% block content %}
+<style>
+    /* Hero Section - Enhanced */
+    .hero-section {
+        position: relative;
+        padding: 6rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 28px;
+        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.35);
+        margin-bottom: 4rem;
+        overflow: hidden;
+        color: white;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: pulse-hero 12s infinite ease-in-out;
+    }
+
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        bottom: -40%;
+        left: -15%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: pulse-hero 10s infinite ease-in-out reverse;
+    }
+
+    @keyframes pulse-hero {
+        0%, 100% { transform: scale(1) translate(0, 0); opacity: 0.4; }
+        50% { transform: scale(1.2) translate(30px, 30px); opacity: 0.7; }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 1000px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(15px);
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .hero-section h1 {
+        font-size: 4.5rem;
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+        letter-spacing: -2px;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .hero-section .subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 3rem;
+        line-height: 1.7;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        opacity: 0.95;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .hero-buttons .btn {
+        padding: 1.2rem 3rem;
+        font-size: 1.15rem;
+        font-weight: 700;
+        border-radius: 14px;
+        transition: all 0.3s;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-hero-primary {
+        background: white;
+        color: var(--primary);
+    }
+
+    .btn-hero-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-hero-secondary {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-hero-secondary:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-3px);
+    }
+
+    /* Features Overview */
+    .features-section {
+        margin-bottom: 5rem;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+
+    .section-header h2 {
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+        letter-spacing: -1px;
+    }
+
+    .section-header p {
+        font-size: 1.3rem;
+        color: var(--gray);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2.5rem;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 3rem;
+        border-radius: 24px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--card-gradient-start), var(--card-gradient-end));
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+        border-color: var(--card-gradient-start);
+    }
+
+    .feature-card.primary {
+        --card-gradient-start: #3B82F6;
+        --card-gradient-end: #2563EB;
+    }
+
+    .feature-card.success {
+        --card-gradient-start: #10B981;
+        --card-gradient-end: #059669;
+    }
+
+    .feature-card.warning {
+        --card-gradient-start: #F59E0B;
+        --card-gradient-end: #D97706;
+    }
+
+    .feature-card.purple {
+        --card-gradient-start: #8B5CF6;
+        --card-gradient-end: #7C3AED;
+    }
+
+    .feature-card.pink {
+        --card-gradient-start: #EC4899;
+        --card-gradient-end: #DB2777;
+    }
+
+    .feature-card.cyan {
+        --card-gradient-start: #06B6D4;
+        --card-gradient-end: #0891B2;
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, var(--card-gradient-start), var(--card-gradient-end));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .feature-card h3 {
+        color: var(--dark);
+        font-weight: 800;
+        font-size: 1.6rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .feature-card p {
+        color: var(--gray);
+        line-height: 1.8;
+        font-size: 1.05rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 1.5rem;
+    }
+
+    .feature-list li {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        color: var(--gray);
+        font-size: 0.95rem;
+    }
+
+    .feature-list li::before {
+        content: '✓';
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: linear-gradient(135deg, var(--card-gradient-start), var(--card-gradient-end));
+        color: white;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+
+    /* How It Works Section */
+    .how-it-works-section {
+        background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        border-radius: 28px;
+        padding: 5rem 3rem;
+        margin-bottom: 5rem;
+        border: 2px solid #e5e7eb;
+    }
+
+    .steps-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 3rem;
+        margin-top: 3rem;
+    }
+
+    .step-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        position: relative;
+        transition: all 0.3s;
+    }
+
+    .step-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+    }
+
+    .step-number {
+        position: absolute;
+        top: -20px;
+        left: 2.5rem;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 1.5rem;
+        box-shadow: 0 6px 20px rgba(15, 76, 129, 0.3);
+    }
+
+    .step-card h4 {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin: 2rem 0 1rem;
+    }
+
+    .step-card p {
+        color: var(--gray);
+        line-height: 1.7;
+    }
+
+    /* Technology Stack */
+    .tech-section {
+        margin-bottom: 5rem;
+    }
+
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .tech-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s;
+        border: 2px solid #e5e7eb;
+    }
+
+    .tech-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        border-color: var(--primary);
+    }
+
+    .tech-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .tech-card h4 {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .tech-card p {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+
+    /* Stats Section - Enhanced */
+    .stats-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: 28px;
+        padding: 5rem 3rem;
+        box-shadow: 0 20px 45px rgba(15, 76, 129, 0.3);
+        margin-bottom: 5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stats-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 3rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 2rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-number {
+        font-size: 4rem;
+        font-weight: 900;
+        color: white;
+        margin-bottom: 0.75rem;
+        line-height: 1;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-label {
+        color: white;
+        font-weight: 600;
+        font-size: 1.15rem;
+        opacity: 0.95;
+    }
+
+    /* Benefits Section */
+    .benefits-section {
+        margin-bottom: 5rem;
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .benefit-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        border-left: 5px solid var(--benefit-color);
+        transition: all 0.3s;
+    }
+
+    .benefit-card:hover {
+        transform: translateX(8px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .benefit-card.time { --benefit-color: #10B981; }
+    .benefit-card.automation { --benefit-color: #3B82F6; }
+    .benefit-card.insights { --benefit-color: #F59E0B; }
+    .benefit-card.organization { --benefit-color: #8B5CF6; }
+
+    .benefit-card h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 1rem;
+    }
+
+    .benefit-card p {
+        color: var(--gray);
+        line-height: 1.7;
+        font-size: 1.05rem;
+    }
+
+    /* CTA Section - Enhanced */
+    .cta-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 28px;
+        padding: 5rem 3rem;
+        text-align: center;
+        color: white;
+        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.35);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .cta-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .cta-section h2 {
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .cta-section p {
+        font-size: 1.3rem;
+        margin-bottom: 2.5rem;
+        opacity: 0.95;
+        line-height: 1.7;
+    }
+
+    .cta-section .btn {
+        padding: 1.3rem 3rem;
+        font-size: 1.2rem;
+        background: white;
+        color: var(--primary);
+        font-weight: 800;
+        border-radius: 14px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .cta-section .btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Testimonials Section */
+    .testimonials-section {
+        margin-bottom: 5rem;
+    }
+
+    .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 2.5rem;
+        margin-top: 3rem;
+    }
+
+    .testimonial-card {
+        background: white;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+        position: relative;
+    }
+
+    .testimonial-quote {
+        font-size: 3rem;
+        color: var(--primary);
+        opacity: 0.2;
+        position: absolute;
+        top: 1rem;
+        left: 1.5rem;
+    }
+
+    .testimonial-text {
+        color: var(--gray);
+        font-size: 1.05rem;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+
+    .author-info h5 {
+        color: var(--dark);
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+
+    .author-info p {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-section h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero-section .subtitle {
+            font-size: 1.15rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+        }
+
+        .features-grid,
+        .steps-container,
+        .tech-grid,
+        .benefits-grid,
+        .testimonials-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-content">
+        <div class="hero-badge">
+            ✨ AI-Powered Placement Platform
+        </div>
+        <h1>Your Complete Placement Management Solution</h1>
+        <p class="subtitle">Automate job tracking, parse resumes with AI, get intelligent recommendations, and never miss a deadline. Built for modern campus recruitment.</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('signup') }}" class="btn btn-hero-primary">Get Started Free →</a>
+            <a href="{{ url_for('login') }}" class="btn btn-hero-secondary">Sign In</a>
+        </div>
+    </div>
+</div>
+
+<!-- Core Features Section -->
+<div class="features-section">
+    <div class="section-header">
+        <h2>Powerful Features Built for Students</h2>
+        <p>Everything you need to manage your placement journey in one intelligent platform</p>
+    </div>
+
+    <div class="features-grid">
+        <!-- Email Integration -->
+        <div class="feature-card primary">
+            <div class="feature-icon">📧</div>
+            <h3>Automated Email Monitoring</h3>
+            <p>Connect your Gmail and let our AI automatically fetch and process placement emails in real-time.</p>
+            <ul class="feature-list">
+                <li>Live email monitoring (5-second intervals)</li>
+                <li>Bulk email processing (up to 500 emails)</li>
+                <li>Smart keyword filtering</li>
+                <li>Automatic attachment extraction</li>
+            </ul>
+        </div>
+
+        <!-- AI Resume Parser -->
+        <div class="feature-card success">
+            <div class="feature-icon">🤖</div>
+            <h3>GPT-4 Resume Parser</h3>
+            <p>Upload your resume and get instant AI-powered analysis with structured data extraction.</p>
+            <ul class="feature-list">
+                <li>Extract skills, education, experience</li>
+                <li>Multiple parsing methods (PyPDF2, pdfplumber, PyMuPDF)</li>
+                <li>GPT-4 Vision for image-based PDFs</li>
+                <li>Automatic profile updates</li>
+            </ul>
+        </div>
+
+        <!-- Job Management -->
+        <div class="feature-card warning">
+            <div class="feature-icon">💼</div>
+            <h3>Smart Job Repository</h3>
+            <p>All opportunities organized with urgency tracking and intelligent deadline management.</p>
+            <ul class="feature-list">
+                <li>Critical deadline alerts (≤3 days)</li>
+                <li>Urgent job tracking (≤7 days)</li>
+                <li>Application status tracking</li>
+                <li>Attachment management</li>
+            </ul>
+        </div>
+
+        <!-- AI Recommendations -->
+        <div class="feature-card purple">
+            <div class="feature-icon">🎯</div>
+            <h3>AI Resume Recommendations</h3>
+            <p>Get personalized suggestions on which resume to use for each job posting.</p>
+            <ul class="feature-list">
+                <li>Match analysis with percentages</li>
+                <li>Gap identification</li>
+                <li>Modification suggestions</li>
+                <li>Cover letter key points</li>
+            </ul>
+        </div>
+
+        <!-- Dashboard Analytics -->
+        <div class="feature-card pink">
+            <div class="feature-icon">📊</div>
+            <h3>Visual Analytics Dashboard</h3>
+            <p>Track your progress with beautiful statistics and progress indicators.</p>
+            <ul class="feature-list">
+                <li>Application activity tracking</li>
+                <li>Success rate calculation</li>
+                <li>Profile completion meter</li>
+                <li>Recent activity timeline</li>
+            </ul>
+        </div>
+
+        <!-- Profile Management -->
+        <div class="feature-card cyan">
+            <div class="feature-icon">👤</div>
+            <h3>Complete Profile Management</h3>
+            <p>Maintain a comprehensive profile with resumes, skills, and portfolio links.</p>
+            <ul class="feature-list">
+                <li>Multiple resume support</li>
+                <li>Skills & certifications tracking</li>
+                <li>LinkedIn & GitHub integration</li>
+                <li>Portfolio showcase</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="how-it-works-section">
+    <div class="section-header">
+        <h2>How PlacementPro Works</h2>
+        <p>Get started in minutes with our simple 4-step process</p>
+    </div>
+
+    <div class="steps-container">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <h4>Create Your Account</h4>
+            <p>Sign up with your college email and complete your profile with basic information including roll number, CGPA, and contact details.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <h4>Upload Your Resumes</h4>
+            <p>Upload one or multiple resumes. Our GPT-4 powered AI will automatically extract your skills, experience, education, and projects.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <h4>Connect Your Email</h4>
+            <p>Link your Gmail account and configure email monitoring. Our system will automatically fetch placement emails and extract job details.</p>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <h4>Apply & Track</h4>
+            <p>Browse opportunities, get AI recommendations, apply to jobs, and track your applications all in one centralized dashboard.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Technology Stack Section -->
+<div class="tech-section">
+    <div class="section-header">
+        <h2>Powered by Cutting-Edge Technology</h2>
+        <p>Built with modern tools and AI to deliver the best experience</p>
+    </div>
+
+    <div class="tech-grid">
+        <div class="tech-card">
+            <div class="tech-icon">🧠</div>
+            <h4>GPT-4o & GPT-4 Vision</h4>
+            <p>Advanced AI for resume parsing</p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-icon">🐍</div>
+            <h4>Python & Flask</h4>
+            <p>Robust backend framework</p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-icon">📧</div>
+            <h4>IMAP Protocol</h4>
+            <p>Real-time email monitoring</p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-icon">🗃️</div>
+            <h4>SQLite Database</h4>
+            <p>Reliable data storage</p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-icon">📄</div>
+            <h4>PyPDF2 & PyMuPDF</h4>
+            <p>Multi-method PDF parsing</p>
+        </div>
+
+        <div class="tech-card">
+            <div class="tech-icon">🎨</div>
+            <h4>Modern UI/UX</h4>
+            <p>Beautiful, responsive design</p>
+        </div>
+    </div>
+</div>
+
+<!-- Benefits Section -->
+<div class="benefits-section">
+    <div class="section-header">
+        <h2>Why Choose PlacementPro?</h2>
+        <p>Transform your placement journey with these key benefits</p>
+    </div>
+
+    <div class="benefits-grid">
+        <div class="benefit-card time">
+            <h4>⏰ Save 10+ Hours Weekly</h4>
+            <p>Automate repetitive tasks like checking emails, tracking deadlines, and organizing job postings. Focus on what matters - preparing for interviews.</p>
+        </div>
+
+        <div class="benefit-card automation">
+            <h4>🤖 AI-Powered Intelligence</h4>
+            <p>Leverage GPT-4 for resume analysis, job matching, and personalized recommendations. Get insights that were previously only available to professionals.</p>
+        </div>
+
+        <div class="benefit-card insights">
+            <h4>📈 Never Miss Opportunities</h4>
+            <p>Real-time email monitoring and critical deadline tracking ensure you never miss important job postings or application deadlines.</p>
+        </div>
+
+        <div class="benefit-card organization">
+            <h4>📋 Stay Organized</h4>
+            <p>Keep all your resumes, applications, and job details in one centralized platform. Track your progress with visual analytics.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="stats-section">
+    <div class="section-header" style="margin-bottom: 3rem;">
+        <h2 style="color: white;">Platform Statistics</h2>
+        <p style="color: white; opacity: 0.9;">Join thousands of students successfully managing their placements</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number">5,000+</div>
+            <div class="stat-label">Active Students</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">1,200+</div>
+            <div class="stat-label">Jobs Processed</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Success Rate</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Monitoring</div>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="testimonials-section">
+    <div class="section-header">
+        <h2>What Students Say</h2>
+        <p>Real feedback from students using PlacementPro</p>
+    </div>
+
+    <div class="testimonials-grid">
+        <div class="testimonial-card">
+            <div class="testimonial-quote">"</div>
+            <p class="testimonial-text">PlacementPro's AI resume parser saved me hours of manually updating my profile. The job matching recommendations helped me land my dream job at a top tech company!</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">AK</div>
+                <div class="author-info">
+                    <h5>Amit Kumar</h5>
+                    <p>Placed at Microsoft • 2024</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="testimonial-quote">"</div>
+            <p class="testimonial-text">The email monitoring feature is a game-changer! I never miss any placement opportunities now. The deadline alerts ensure I'm always prepared and on time.</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">PS</div>
+                <div class="author-info">
+                    <h5>Priya Sharma</h5>
+                    <p>Placed at Amazon • 2024</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="testimonial-quote">"</div>
+            <p class="testimonial-text">The dashboard analytics helped me track my progress and identify areas for improvement. The AI recommendations were spot-on for matching my skills to jobs!</p>
+            <div class="testimonial-author">
+                <div class="author-avatar">RV</div>
+                <div class="author-info">
+                    <h5>Rahul Verma</h5>
+                    <p>Placed at Google • 2024</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Final CTA Section -->
+<div class="cta-section">
+    <div class="cta-content">
+        <h2>Ready to Transform Your Placement Journey?</h2>
+        <p>Join thousands of students who are already using PlacementPro to land their dream jobs. Get started for free today!</p>
+        <a href="{{ url_for('signup') }}" class="btn">Create Your Free Account →</a>
+    </div>
+</div>
+
+{% endblock %}

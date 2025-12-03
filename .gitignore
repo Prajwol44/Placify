@@ -1,0 +1,12 @@
+# Virtual environment
+venv/
+# Python cache
+__pycache__/
+*.pyc
+# .env file
+.env
+# uploads or other local storage
+uploads/
+# any DBs or local files
+*.db
+placement_portal.db
